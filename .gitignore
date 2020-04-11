@@ -1,0 +1,4 @@
+/target
+
+# Since this is a rust library, cargo.lock should be in gitignore
+Cargo.lock
