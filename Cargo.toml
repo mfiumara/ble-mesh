@@ -2,7 +2,7 @@
 name = "ble-mesh"
 version = "0.1.0"
 authors = ["Mattia Fiumara <mattiafiumara@gmail.com>"]
-license = "MIT"
+license = "Apache-2.0"
 edition = "2018"
 description = "A rust bluetooth mesh implementation, designed for interoperability with other bluetooth mesh stacks."
 readme = "README.md"
