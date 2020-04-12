@@ -1,3 +1,8 @@
+// #[macro_use]
+// extern crate bitflags;
+
+pub mod net;
+
 #[cfg(test)]
 mod tests {
     #[test]
