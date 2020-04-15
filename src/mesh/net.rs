@@ -1,4 +1,3 @@
-// use bitvec::prelude as bv;
 use bitvec::prelude::*;
 
 // enum NetAddr {
@@ -7,45 +6,55 @@ use bitvec::prelude::*;
 //     VirtualAddr,
 //     GroupAddr,
 // }
-
-// bitflags! {
-//     struct PDUBITS: bv::BitVec<bv::Msb0, u8> {
-//         const A = 0b00000001;
-//         const B = 0b00000010;
-//     }
-// }
+const PDU_PREAMBLE_SIZE: usize = 9;
+const MAX_TRANSPORT_PDU_SIZE: usize = 16;
+const MAX_NETMIC_SIZE: usize = 8;
+const MAX_NETWORK_PDU_SIZE: usize = 
+    PDU_PREAMBLE_SIZE + MAX_TRANSPORT_PDU_SIZE + MAX_NETMIC_SIZE;
 
 // #[derive(Debug)]
 struct Pdu {
     // Mesh spec 3.1.1: "For the network layer, lower transport layer, upper
     // transport layer, mesh beacons, and Provisioning, all multiple-octect
     // numeric values shall be sent in big endian"
-    bits: BitVec<Msb0, u8>
+    // bits: BitVec<Msb0, u8>
+    buf: Vec<u8>
 }
 
 // Mesh Spec 3.4.4
 impl Pdu {
+    fn new() -> Pdu {
+        Pdu { 
+            buf: vec![0; MAX_NETWORK_PDU_SIZE]
+        }
+    }
+    fn from(buf: Vec<u8>) -> Pdu {
+        Pdu {
+            buf
+        }
+    }
     // The IVI field contains the least significant bit of the IV Index used in
     // the nonce to authenticate and encrypt this Network PDU.
-    fn ivi(&self) -> &BitSlice<Msb0, u8> {
-        &self.bits[0..1]
+    fn ivi(&self) -> bool {
+        &self.buf[0] & 0b1000_0000 != 0
     }
     // The NID field contains a 7-bit network identifier that allows for an
     // easier lookup of the Encryption Key and Privacy Key used to 
     // authenticate and encrypt this Network PDU.
-    fn nid(&self) -> &BitSlice<Msb0, u8> {
-        &self.bits[1..8]
+    fn nid(&self) -> u8 {
+        self.buf[0] & 0b0111_1111
     }
     // The CTL field is a 1-bit value that is used to determine if the message
     // is part of a Control Message or an Access Message.
-    fn ctl(&self) -> &BitSlice<Msb0, u8> {
-        &self.bits[8..9]
+    fn ctl(&self) -> bool {
+        &self.buf[1] & 0b1000_0000 != 0
     }
-    fn ttl(&self) -> &BitSlice<Msb0, u8> {
-        &self.bits[9..16]
+    fn ttl(&self) -> u8 {
+        self.buf[1] & 0b0111_1111
     }
-    fn seq(&self) -> &BitSlice<Msb0, u8> {
-        &self.bits[16..40]
+    fn seq(&self) -> u32 {
+        &self.buf[2..5] as u32
+        // &self.bits[16..40]
     }
     fn src(&self) -> &BitSlice<Msb0, u8> {
         &self.bits[40..56]
