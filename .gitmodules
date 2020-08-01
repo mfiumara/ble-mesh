@@ -1,0 +1,6 @@
+[submodule "modules/bluez"]
+	path = modules/bluez
+	url = git://git.kernel.org/pub/scm/bluetooth/bluez.git
+[submodule "modules/ell"]
+	path = modules/ell
+	url = git://git.kernel.org/pub/scm/libs/ell/ell.git
