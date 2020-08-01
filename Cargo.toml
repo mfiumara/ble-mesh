@@ -1,6 +1,6 @@
 [package]
 name = "ble-mesh"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Mattia Fiumara <mattiafiumara@gmail.com>"]
 license = "Apache-2.0"
 edition = "2018"
@@ -9,7 +9,13 @@ readme = "README.md"
 repository = "https://github.com/mfiumara/ble-mesh"
 
 [dependencies]
+# bitflags = "*"
+# bitvec = "*"
 # Dependencies that we might need
 # serde = "*"
 # async_std = "*"
 # rand = "*"
+[build-dependencies]
+bindgen = "*"
+cc = "*"
+pkg-config = "*"
