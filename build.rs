@@ -3,21 +3,27 @@ extern crate bindgen;
 use std::env;
 use std::path::PathBuf;
 
+use autotools::Config;
+
 fn main() {
     // Tell cargo to invalidate the built crate whenever the wrapper changes
     println!("cargo:rerun-if-changed=wrapper.h");
 
-    // bluez has the following dependencies for mesh_cfgclient:
-    // tools_mesh_cfgclient_LDADD = lib/libbluetooth-internal.la src/libshared-ell.la \
-    // $(ell_ldadd) -ljson-c -lreadline
-    // Link json-c and readline should be installed in the system
+    // json-c and readline should be installed in the system, link them using pkg-config
     pkg_config::Config::new().probe("json-c").unwrap();
     pkg_config::Config::new().probe("readline").unwrap();
 
-    // bluetooth and ell need to be compiled in order to be linked
-    // pkg_config::Config::new().probe("bluetooth").unwrap();
-    // libbluetooth-internal.la
-    // 
+    // build bluez using autotools and link
+    let dst = Config::new("modules/bluez")
+        .enable("mesh", None)
+        .make_target("all")
+        .build();
+
+    // Not sure yet how to actually link
+    // println!("cargo:rustc-link-search=native={}/build/lib", dst.display());
+    // println!("cargo:rustc-link-search=native={}/build/src", dst.display());
+    // println!("cargo:rustc-link-lib=libshared-ell.la");
+    // println!("cargo:rustc-link-lib=static=libbluetooth-internal.la");
 
     // The bindgen::Builder is the main entry point
     // to bindgen, and lets you build up options for
