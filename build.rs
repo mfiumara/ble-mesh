@@ -11,7 +11,7 @@ fn main() {
 
     // json-c and readline should be installed in the system, link them using pkg-config
     pkg_config::Config::new().probe("json-c").unwrap();
-    pkg_config::Config::new().probe("readline").unwrap();
+    // pkg_config::Config::new().probe("readline").unwrap();
 
     // build bluez using autotools and link
     let dst = Config::new("modules/bluez")

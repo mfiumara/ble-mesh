@@ -33,15 +33,25 @@ If one of the kernel options has a line which looks like `# CONFIG_CRYPTO_USER i
 
 ### Bluez dependencies
 
-In order to build bluez you'll need some extra dependencies, specifically `libell` and `json-c`. You have the choice to link against a system library or build the libraries alongside bluez: we are going to build `libell` alongside bluez and link against a system `json-c` using the `pkg_config` crate.
+This crate builds bluez from source using the rust build script. In order to build bluez you need to install bluez's build dependencies. On debian-based distros (Ubuntu) install the required dependencies as follows:
 
-In order to build bluez, make sure you have the git submodules checked out:
-```
-git submodule init && git submodule update
-cd modules/bluez
-./bootstrap && ./configure --enable-mesh
-make -j4
+```bash
+sudo apt-get build-dep bluez
+sudo apt-get install libjson-c-dev clang llvm
 ```
 
-After compiling bluez make sure `modules/bluez/lib/libbluetooth-internal.la` and `modules/bluez/src/libshared-ell.la` are present in your file tree: we will be linking this crate against these libraries.
+## Building ble-mesh
 
+Once you adhere to above dependencies, you'll need to bootstrap bluez once:
+
+```bash
+cd modules/bluez && ./bootstrap
+```
+
+Then you can build the crate as usual using `cargo`:
+
+```bash
+cargo build
+```
+
+This will bootstrap bluez, then builds and links the libraries against the rust bindings.
